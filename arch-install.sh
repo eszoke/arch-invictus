@@ -7,6 +7,7 @@ readonly SUCCESS=0
 readonly FAILURE=1
 readonly PING_ONCE=1
 readonly CMD_RETURN_STATUS="$?"
+readonly NEWLINE="\n"
 
 #===Functions================
 
@@ -236,6 +237,7 @@ disk_partitioner () {
 
         # Print disks for user
         parted -l
+        printf "\n\n"
 
         # Prompt the user to select a disk
         disks="$(parted -l | grep '/sd')"
@@ -254,14 +256,15 @@ disk_partitioner () {
 
         install_disk="${opt:5:8}"
     
-        printf "Arch Linux will be installed on '%s'.\n" "$opt"
-        read -r -p "WARNING: THIS WILL DELETE EVERYTHING ON THIS DRIVE. CONTINUE? (y/N):" input
+        printf "\nArch Linux will be installed on '%s'.\n\n\n" "$install_disk"
+        read -r -p "WARNING: THIS WILL DELETE EVERYTHING ON THIS DRIVE. CONTINUE? (y/N): " input
         if [ "$input" = "y" ] || [ "$input" = "Y" ] || [ "$input" = "yes" ]; then
             break
         fi
     done
 
     # Get swap info from user
+    printf "\n"
     read -r -p "Enter swap size in GB: " swap_size
     let swap_size*=1024
     let swap_size+=513
@@ -286,17 +289,17 @@ disk_partitioner () {
     parted -s -a optimal "$install_disk" mkpart primary ext4 ${swap_size}MiB 90%
     error_check "$SUCCESS_MSG"
 
-    printf "Formatting EFI partition to FAT32......"
+    printf "Formatting EFI partition to FAT32...\n"
     mkfs.fat -F32 "${install_disk}1"
-    error_check "$SUCCESS_MSG"
+    error_check "Format successfull\n"
 
-    printf "Formatting swap partition......"
+    printf "Formatting swap space...\n"
     mkswap "${install_disk}2"
-    error_check "$SUCCESS_MSG"
+    error_check "Format successfull\n"
 
-    printf "Formatting root partition to ext4......"
+    printf "Formatting root partition to ext4...\n"
     mkfs.ext4 "${install_disk}3"
-    error_check "$SUCCESS_MSG"
+    error_check "Formatting completed\n"
 
     printf "Mounting swap partition......"
     swapon "${install_disk}2"
@@ -310,6 +313,8 @@ disk_partitioner () {
     mkdir /mnt/boot
     mount "${install_disk}1" /mnt/boot
     error_check "$SUCCESS_MSG"
+
+    printf "Disk partitioning completed\n"
 }
 
 #===Main Program=============
@@ -359,11 +364,11 @@ main () {
 
     # Sort the download mirrors by speed
     printf "Sorting pacman mirrors by download speed......"
-    reflector --country "United States" --country "Canada" --age 12 -- protocol http --protocol https --sort rate --save /etc/pacman.d/mirrorlist
+    reflector --country "United States" --country "Canada" --age 12 --protocol http --protocol https --sort rate --save /etc/pacman.d/mirrorlist
     error_check "done\n"
 
     # Bootstrap base Arch packages plus essentials
-    printf "Installing base Arch Linux packages...\n"
+    printf "Installing base Arch Linux packages...\n\n"
     pacstrap /mnt base base-devel grub git openssh vim
     error_check "Bootstrap completed successfully\n"
 
@@ -373,7 +378,7 @@ main () {
     error_check
 
     # Change root into new install
-    arch-chroot /mnt
+    #arch-chroot /mnt
     echo "u there?"
     # Temp ending
     printf "\nlol u made it\n"
