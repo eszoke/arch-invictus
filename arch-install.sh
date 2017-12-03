@@ -267,7 +267,7 @@ disk_partitioner () {
     let swap_size+=513
 
     printf "Creating new '%s' partition table......" "$boot"
-    parted -s "$install_disk" mkabel gpt
+    parted -s "$install_disk" mklabel gpt
     error_check "$SUCCESS_MSG"
 
     printf "Creating EFI partition......"
