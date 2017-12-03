@@ -237,7 +237,6 @@ disk_partitioner () {
 
         # Print disks for user
         parted -l
-        printf "\n"
 
         # Prompt the user to select a disk
         disks="$(parted -l | grep '/sd')"
@@ -378,7 +377,7 @@ main () {
     error_check "$SUCCESS_MSG"
 
     # Change root into new install
-    #arch-chroot /mnt
+    arch-chroot /mnt
     echo "u there?"
     # Temp ending
     printf "\nlol u made it\n"
