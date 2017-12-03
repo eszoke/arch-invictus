@@ -66,7 +66,7 @@ error_check () {
 # Function to verify boot mode matches user selection
 # $1: User's selected boot mode
 check_boot () {
-    local -r UEFI_DIR="/home/chrysis/Workspace"
+    local -r UEFI_DIR="/sys/firmware/efi/efivars"
 
     # UEFI vars detected
     if [ "$(ls -A ${UEFI_DIR})" ]; then
@@ -328,11 +328,11 @@ main () {
     select opt in "${options[@]}"; do
         case $opt in
             "UEFI")
-                boot_mode="UEFI"
+                boot_mode="gpt"
                 printf "\nUEFI install selected\n\n"
                 break;;
             "BIOS")
-                boot_mode="BIOS"
+                boot_mode="msdos"
                 printf "\nBIOS install selected\n\n"
                 break;;
             "Quit")
