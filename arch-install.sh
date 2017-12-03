@@ -237,7 +237,7 @@ disk_partitioner () {
 
         # Print disks for user
         parted -l
-        printf "\n\n"
+        printf "\n"
 
         # Prompt the user to select a disk
         disks="$(parted -l | grep '/sd')"
@@ -256,7 +256,7 @@ disk_partitioner () {
 
         install_disk="${opt:5:8}"
     
-        printf "\nArch Linux will be installed on '%s'.\n\n\n" "$install_disk"
+        printf "\nArch Linux will be installed on '%s'\n\n\n" "$install_disk"
         read -r -p "WARNING: THIS WILL DELETE EVERYTHING ON THIS DRIVE. CONTINUE? (y/N): " input
         if [ "$input" = "y" ] || [ "$input" = "Y" ] || [ "$input" = "yes" ]; then
             break
@@ -369,13 +369,13 @@ main () {
 
     # Bootstrap base Arch packages plus essentials
     printf "Installing base Arch Linux packages...\n\n"
-    pacstrap /mnt base base-devel grub git openssh vim
+    pacstrap /mnt base base-devel git grub openssh vim
     error_check "Bootstrap completed successfully\n"
 
     # Generate fstab file
     printf "Generating fstab file......"
     genfstab -U /mnt >> /mnt/etc/fstab
-    error_check
+    error_check "$SUCCESS_MSG"
 
     # Change root into new install
     #arch-chroot /mnt
